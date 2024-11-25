@@ -37,6 +37,7 @@ module ABC80 (
 	input         KEY_PRESSED,
 	input         KEY_EXTENDED,
 	input   [7:0] KEY_CODE, // PS2 keycode
+	output        UPCASE,
 
 	// DMA bus
 	input         DL,
@@ -477,7 +478,7 @@ assign cpu_din = pio_oe ? pio_dout :
 // keyboard
 reg         akd;
 reg   [6:0] kcode;
-reg         shift, ctrl;
+reg         shift, ctrl, upcase;
 reg         keydown;
 reg  [23:0] keydown_cnt, keyrep_cnt;
 
@@ -515,38 +516,41 @@ always @(posedge CLK12) begin
 	end
 end
 
+assign UPCASE = upcase;
+
 always @(posedge CLK12) begin : KEYBOARD
 	if (KEY_STROBE) begin
 		casez ({ctrl, shift, KEY_EXTENDED, KEY_CODE})
 			{2'b??, 9'h012}: shift <= KEY_PRESSED;
 			{2'b??, 9'h059}: shift <= KEY_PRESSED;
 			{2'b??, 9'h?14}: ctrl <= KEY_PRESSED;
-			{2'b0?, 9'h01c}: begin akd <= KEY_PRESSED; kcode <= 7'h41 | {~shift, 5'd0}; end //A
-			{2'b0?, 9'h032}: begin akd <= KEY_PRESSED; kcode <= 7'h42 | {~shift, 5'd0}; end //B
-			{2'b0?, 9'h021}: begin akd <= KEY_PRESSED; kcode <= 7'h43 | {~shift, 5'd0}; end //C
-			{2'b0?, 9'h023}: begin akd <= KEY_PRESSED; kcode <= 7'h44 | {~shift, 5'd0}; end //D
-			{2'b0?, 9'h024}: begin akd <= KEY_PRESSED; kcode <= 7'h45 | {~shift, 5'd0}; end //E
-			{2'b0?, 9'h02B}: begin akd <= KEY_PRESSED; kcode <= 7'h46 | {~shift, 5'd0}; end //F
-			{2'b0?, 9'h034}: begin akd <= KEY_PRESSED; kcode <= 7'h47 | {~shift, 5'd0}; end //G
-			{2'b0?, 9'h033}: begin akd <= KEY_PRESSED; kcode <= 7'h48 | {~shift, 5'd0}; end //H
-			{2'b0?, 9'h043}: begin akd <= KEY_PRESSED; kcode <= 7'h49 | {~shift, 5'd0}; end //I
-			{2'b0?, 9'h03B}: begin akd <= KEY_PRESSED; kcode <= 7'h4a | {~shift, 5'd0}; end //J
-			{2'b0?, 9'h042}: begin akd <= KEY_PRESSED; kcode <= 7'h4b | {~shift, 5'd0}; end //K
-			{2'b0?, 9'h04B}: begin akd <= KEY_PRESSED; kcode <= 7'h4c | {~shift, 5'd0}; end //L
-			{2'b0?, 9'h03A}: begin akd <= KEY_PRESSED; kcode <= 7'h4d | {~shift, 5'd0}; end //M
-			{2'b0?, 9'h031}: begin akd <= KEY_PRESSED; kcode <= 7'h4e | {~shift, 5'd0}; end //N
-			{2'b0?, 9'h044}: begin akd <= KEY_PRESSED; kcode <= 7'h4f | {~shift, 5'd0}; end //O
-			{2'b0?, 9'h04D}: begin akd <= KEY_PRESSED; kcode <= 7'h50 | {~shift, 5'd0}; end //P
-			{2'b0?, 9'h015}: begin akd <= KEY_PRESSED; kcode <= 7'h51 | {~shift, 5'd0}; end //Q
-			{2'b0?, 9'h02D}: begin akd <= KEY_PRESSED; kcode <= 7'h52 | {~shift, 5'd0}; end //R
-			{2'b0?, 9'h01B}: begin akd <= KEY_PRESSED; kcode <= 7'h53 | {~shift, 5'd0}; end //S
-			{2'b0?, 9'h02C}: begin akd <= KEY_PRESSED; kcode <= 7'h54 | {~shift, 5'd0}; end //T
-			{2'b0?, 9'h03C}: begin akd <= KEY_PRESSED; kcode <= 7'h55 | {~shift, 5'd0}; end //U
-			{2'b0?, 9'h02A}: begin akd <= KEY_PRESSED; kcode <= 7'h56 | {~shift, 5'd0}; end //V
-			{2'b0?, 9'h01D}: begin akd <= KEY_PRESSED; kcode <= 7'h57 | {~shift, 5'd0}; end //W
-			{2'b0?, 9'h022}: begin akd <= KEY_PRESSED; kcode <= 7'h58 | {~shift, 5'd0}; end //X
-			{2'b0?, 9'h035}: begin akd <= KEY_PRESSED; kcode <= 7'h59 | {~shift, 5'd0}; end //Y
-			{2'b0?, 9'h01A}: begin akd <= KEY_PRESSED; kcode <= 7'h5a | {~shift, 5'd0}; end //Z
+			{2'b??, 9'h058}: if (KEY_PRESSED) upcase <= ~upcase;
+			{2'b0?, 9'h01c}: begin akd <= KEY_PRESSED; kcode <= 7'h41 | {~(shift ^ upcase), 5'd0}; end //A
+			{2'b0?, 9'h032}: begin akd <= KEY_PRESSED; kcode <= 7'h42 | {~(shift ^ upcase), 5'd0}; end //B
+			{2'b0?, 9'h021}: begin akd <= KEY_PRESSED; kcode <= 7'h43 | {~(shift ^ upcase), 5'd0}; end //C
+			{2'b0?, 9'h023}: begin akd <= KEY_PRESSED; kcode <= 7'h44 | {~(shift ^ upcase), 5'd0}; end //D
+			{2'b0?, 9'h024}: begin akd <= KEY_PRESSED; kcode <= 7'h45 | {~(shift ^ upcase), 5'd0}; end //E
+			{2'b0?, 9'h02B}: begin akd <= KEY_PRESSED; kcode <= 7'h46 | {~(shift ^ upcase), 5'd0}; end //F
+			{2'b0?, 9'h034}: begin akd <= KEY_PRESSED; kcode <= 7'h47 | {~(shift ^ upcase), 5'd0}; end //G
+			{2'b0?, 9'h033}: begin akd <= KEY_PRESSED; kcode <= 7'h48 | {~(shift ^ upcase), 5'd0}; end //H
+			{2'b0?, 9'h043}: begin akd <= KEY_PRESSED; kcode <= 7'h49 | {~(shift ^ upcase), 5'd0}; end //I
+			{2'b0?, 9'h03B}: begin akd <= KEY_PRESSED; kcode <= 7'h4a | {~(shift ^ upcase), 5'd0}; end //J
+			{2'b0?, 9'h042}: begin akd <= KEY_PRESSED; kcode <= 7'h4b | {~(shift ^ upcase), 5'd0}; end //K
+			{2'b0?, 9'h04B}: begin akd <= KEY_PRESSED; kcode <= 7'h4c | {~(shift ^ upcase), 5'd0}; end //L
+			{2'b0?, 9'h03A}: begin akd <= KEY_PRESSED; kcode <= 7'h4d | {~(shift ^ upcase), 5'd0}; end //M
+			{2'b0?, 9'h031}: begin akd <= KEY_PRESSED; kcode <= 7'h4e | {~(shift ^ upcase), 5'd0}; end //N
+			{2'b0?, 9'h044}: begin akd <= KEY_PRESSED; kcode <= 7'h4f | {~(shift ^ upcase), 5'd0}; end //O
+			{2'b0?, 9'h04D}: begin akd <= KEY_PRESSED; kcode <= 7'h50 | {~(shift ^ upcase), 5'd0}; end //P
+			{2'b0?, 9'h015}: begin akd <= KEY_PRESSED; kcode <= 7'h51 | {~(shift ^ upcase), 5'd0}; end //Q
+			{2'b0?, 9'h02D}: begin akd <= KEY_PRESSED; kcode <= 7'h52 | {~(shift ^ upcase), 5'd0}; end //R
+			{2'b0?, 9'h01B}: begin akd <= KEY_PRESSED; kcode <= 7'h53 | {~(shift ^ upcase), 5'd0}; end //S
+			{2'b0?, 9'h02C}: begin akd <= KEY_PRESSED; kcode <= 7'h54 | {~(shift ^ upcase), 5'd0}; end //T
+			{2'b0?, 9'h03C}: begin akd <= KEY_PRESSED; kcode <= 7'h55 | {~(shift ^ upcase), 5'd0}; end //U
+			{2'b0?, 9'h02A}: begin akd <= KEY_PRESSED; kcode <= 7'h56 | {~(shift ^ upcase), 5'd0}; end //V
+			{2'b0?, 9'h01D}: begin akd <= KEY_PRESSED; kcode <= 7'h57 | {~(shift ^ upcase), 5'd0}; end //W
+			{2'b0?, 9'h022}: begin akd <= KEY_PRESSED; kcode <= 7'h58 | {~(shift ^ upcase), 5'd0}; end //X
+			{2'b0?, 9'h035}: begin akd <= KEY_PRESSED; kcode <= 7'h59 | {~(shift ^ upcase), 5'd0}; end //Y
+			{2'b0?, 9'h01A}: begin akd <= KEY_PRESSED; kcode <= 7'h5a | {~(shift ^ upcase), 5'd0}; end //Z
 
 			{2'b00, 9'h016}: begin akd <= KEY_PRESSED; kcode <= 7'h31; end //1
 			{2'b00, 9'h01E}: begin akd <= KEY_PRESSED; kcode <= 7'h32; end //2
@@ -593,11 +597,6 @@ always @(posedge CLK12) begin : KEYBOARD
 			{2'b00, 9'h049}: begin akd <= KEY_PRESSED; kcode <= 7'h2E; end // .
 			{2'b00, 9'h04A}: begin akd <= KEY_PRESSED; kcode <= 7'h2D; end // -
 			{2'b00, 9'h04E}: begin akd <= KEY_PRESSED; kcode <= 7'h2B; end // +
-			{2'b00, 9'h055}: begin akd <= KEY_PRESSED; kcode <= 7'h60; end // é
-			{2'b00, 9'h054}: begin akd <= KEY_PRESSED; kcode <= 7'h7D; end // [
-			{2'b00, 9'h05B}: begin akd <= KEY_PRESSED; kcode <= 7'h7E; end // ]
-			{2'b00, 9'h04C}: begin akd <= KEY_PRESSED; kcode <= 7'h7C; end // ;
-			{2'b00, 9'h052}: begin akd <= KEY_PRESSED; kcode <= 7'h7B; end // '
 			{2'b00, 9'h05D}: begin akd <= KEY_PRESSED; kcode <= 7'h27; end // //
 			{2'b00, 9'h00E}: begin akd <= KEY_PRESSED; kcode <= 7'h3C; end // `
 
@@ -605,16 +604,19 @@ always @(posedge CLK12) begin : KEYBOARD
 			{2'b01, 9'h049}: begin akd <= KEY_PRESSED; kcode <= 7'h3A; end // SHIFT + .
 			{2'b01, 9'h04A}: begin akd <= KEY_PRESSED; kcode <= 7'h5F; end // SHIFT + -
 			{2'b01, 9'h04E}: begin akd <= KEY_PRESSED; kcode <= 7'h3F; end // SHIFT + +
-			{2'b01, 9'h055}: begin akd <= KEY_PRESSED; kcode <= 7'h40; end // SHIFT + é
-			{2'b01, 9'h054}: begin akd <= KEY_PRESSED; kcode <= 7'h5D; end // SHIFT + [
-			{2'b01, 9'h05B}: begin akd <= KEY_PRESSED; kcode <= 7'h5E; end // SHIFT + ]
-			{2'b01, 9'h04C}: begin akd <= KEY_PRESSED; kcode <= 7'h5C; end // SHIFT + ;
-			{2'b01, 9'h052}: begin akd <= KEY_PRESSED; kcode <= 7'h5B; end // SHIFT + '
 			{2'b01, 9'h05D}: begin akd <= KEY_PRESSED; kcode <= 7'h2A; end // SHIFT + //
 			{2'b01, 9'h00E}: begin akd <= KEY_PRESSED; kcode <= 7'h3E; end // SHIFT + `
 			{2'b1?, 9'h00E}: begin akd <= KEY_PRESSED; kcode <= 7'h7F; end // CTRL + `
+
+			{2'b0?, 9'h055}: begin akd <= KEY_PRESSED; kcode <= 7'h40 | {~(shift ^ upcase), 5'd0}; end // é
+			{2'b0?, 9'h054}: begin akd <= KEY_PRESSED; kcode <= 7'h5D | {~(shift ^ upcase), 5'd0}; end // [
+			{2'b0?, 9'h05B}: begin akd <= KEY_PRESSED; kcode <= 7'h5E | {~(shift ^ upcase), 5'd0}; end // ]
+			{2'b0?, 9'h04C}: begin akd <= KEY_PRESSED; kcode <= 7'h5C | {~(shift ^ upcase), 5'd0}; end // ;
+			{2'b0?, 9'h052}: begin akd <= KEY_PRESSED; kcode <= 7'h5B | {~(shift ^ upcase), 5'd0}; end // '
+
 		endcase
 	end
+	if (RESET) upcase <= 0;
 end
 
 endmodule

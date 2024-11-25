@@ -257,6 +257,7 @@ user_io(
 	.key_pressed    (key_pressed    ),
 	.key_extended   (key_extended   ),
 	.key_code       (key_code       ),
+	.leds           ({2'b01, 4'd0, upcase, 1'b1}),
 	.joystick_0     (joystick_0     ),
 	.joystick_1     (joystick_1     ),
 	.status         (status         )
@@ -295,6 +296,7 @@ wire        hs, vs;
 wire        hb, vb;
 reg   [1:0] cass_in;
 wire        cass_out;
+wire        upcase;
 
 always @(posedge clk12) begin
 `ifdef USE_AUDIO_IN
@@ -323,6 +325,7 @@ ABC80 ABC80 (
 	.KEY_PRESSED(key_pressed),
 	.KEY_EXTENDED(key_extended),
 	.KEY_CODE(key_code),
+	.UPCASE(upcase),
 
 	.DL(ioctl_downl),
 	.DL_CLK(clk48),
