@@ -77,12 +77,12 @@ reg   [7:0] charrom_q;
 
 always @(posedge DL_CLK) begin
 	if (DL_WE & DL_ROM & DL_ADDR[15:14] == 1) begin
-		if      (DL_ADDR[13: 0] < 1280) charrom[DL_ADDR[13:0]] <= DL_DATA;
-		else if (DL_ADDR[13: 0] < 1792) rom_k1[{~DL_ADDR[8], DL_ADDR[7:0]}] <= DL_DATA[3:0];
-		else if (DL_ADDR[13: 0] < 2304) rom_k2[{~DL_ADDR[8], DL_ADDR[7:0]}] <= DL_DATA[3:0];
-		else if (DL_ADDR[13: 0] < 2560) rom_k5[DL_ADDR[7:0]] <= DL_DATA[3:0];
-		else if (DL_ADDR[13: 0] < 2816) rom_j3[DL_ADDR[7:0]] <= DL_DATA[3:0];
-		else if (DL_ADDR[13: 0] < 3072) rom_e7[DL_ADDR[7:0]] <= DL_DATA[3:0];
+		if      (DL_ADDR[13: 0] < 2560) begin if (DL_ADDR[13:0] < 1280) charrom[DL_ADDR[13:0]] <= DL_DATA; end
+		else if (DL_ADDR[13: 0] < 3072) rom_k1[DL_ADDR[8:0]] <= DL_DATA[3:0];
+		else if (DL_ADDR[13: 0] < 3584) rom_k2[DL_ADDR[8:0]] <= DL_DATA[3:0];
+		else if (DL_ADDR[13: 0] < 3840) rom_k5[DL_ADDR[7:0]] <= DL_DATA[3:0];
+		else if (DL_ADDR[13: 0] < 4096) rom_j3[DL_ADDR[7:0]] <= DL_DATA[3:0];
+		else if (DL_ADDR[13: 0] < 4352) rom_e7[DL_ADDR[7:0]] <= DL_DATA[3:0];
 	end
 end
 
