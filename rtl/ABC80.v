@@ -33,6 +33,11 @@ module ABC80 (
 	output        CASS_CTRL,
 	input         XMEM,
 
+	input         UART_RX,
+	output        UART_TX,
+	input         UART_CTS,
+	output        UART_RTS,
+
 	input         KEY_STROBE,
 	input         KEY_PRESSED,
 	input         KEY_EXTENDED,
@@ -464,9 +469,12 @@ z80_pio z80_pio (
 	.ardy(),
 	.astrb_n(vcnt[0]), // strobe is connected but control mode is selected(?)
 
-	.piob_in({tape_in, 7'h3f}),
+	.piob_in({tape_in, 5'h1f, UART_CTS, UART_RX}),
 	.piob_out(piob_out)
 );
+
+assign UART_TX = piob_out[3];
+assign UART_RTS = piob_out[4];
 
 assign cpu_din = pio_oe ? pio_dout :
                  vrams ? vram_q :

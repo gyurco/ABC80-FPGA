@@ -107,6 +107,12 @@ module ABC80_MiST (
 `ifdef USE_AUDIO_IN
 	input         AUDIO_IN,
 `endif
+`ifdef USE_EXPANSION
+	input         UART_CTS,
+	output        UART_RTS,
+	inout         EXP7,
+	inout         MOTOR_CTRL,
+`endif
 	input         UART_RX,
 	output        UART_TX
 
@@ -173,6 +179,9 @@ localparam CONF_STR = {
 	"O34,Scanlines,Off,25%,50%,75%;",
 	"O5,Blend,Off,On;",
 	"O6,Tape Sounds,Off,On;",
+`ifndef USE_EXPANSION
+	"O7,Userport,Tape,UART;",
+`endif
 	"T0,Reset;",
 	"V,v1.00.",`BUILD_DATE
 };
@@ -181,6 +190,7 @@ wire  [1:0] scanlines = status[4:3];
 wire        blend = status[5];
 wire        tapesnd = status[6];
 wire        xmem = status[2];
+wire        uart_en = status[7];
 
 assign 		LED = ~ioctl_downl;
 assign 		SDRAM_CLK = 0;
@@ -296,7 +306,9 @@ wire        hs, vs;
 wire        hb, vb;
 reg   [1:0] cass_in;
 wire        cass_out;
+wire        cass_relay;
 wire        upcase;
+wire        uart_tx, uart_rts, uart_cts;
 
 always @(posedge clk12) begin
 `ifdef USE_AUDIO_IN
@@ -306,6 +318,17 @@ always @(posedge clk12) begin
 `endif
 	cass_in[1] <= cass_in[0];
 end
+
+`ifdef USE_EXPANSION
+assign MOTOR_CTRL = cass_relay ? 1'b0 : 1'bZ;
+assign UART_TX = uart_tx;
+assign UART_RTS = uart_rts;
+assign uart_cts = UART_CTS;
+assign EXP7 = 1'bZ;
+`else
+assign UART_TX = uart_en ? uart_tx : ~cass_relay;
+assign uart_cts = 0;
+`endif
 
 ABC80 ABC80 (
 	.RESET(reset),
@@ -318,8 +341,13 @@ ABC80 ABC80 (
 	.AUDIO(audio),
 	.CASS_IN(cass_in[1]),
 	.CASS_OUT(cass_out),
-	.CASS_CTRL(UART_TX),
+	.CASS_CTRL(cass_relay),
 	.XMEM(xmem),
+
+	.UART_RX(UART_RX),
+	.UART_TX(uart_tx),
+	.UART_CTS(uart_cts),
+	.UART_RTS(uart_rts),
 
 	.KEY_STROBE(key_strobe),
 	.KEY_PRESSED(key_pressed),
