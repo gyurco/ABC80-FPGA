@@ -464,7 +464,7 @@ z80_pio z80_pio (
 	.sel_ab(cpu_addr[1]),
 	.sel_cd(cpu_addr[0]),
 
-	.pioa_in({keydown, kcode}),
+	.pioa_in(keystrokes[rd_index]),
 	.pioa_out(),
 	.ardy(),
 	.astrb_n(vcnt[0]), // strobe is connected but control mode is selected(?)
@@ -487,41 +487,44 @@ assign cpu_din = pio_oe ? pio_dout :
 reg         akd;
 reg   [6:0] kcode;
 reg         shift, ctrl, upcase;
-reg         keydown;
-reg  [23:0] keydown_cnt, keyrep_cnt;
+reg [7:0] keystrokes[8];
+reg [2:0] wr_index = 3'd0;
+reg [2:0] rd_index = 3'd0;
+reg [7:0] rd_counter = 8'd0;
 
 always @(posedge CLK12) begin
-	reg akd_d;
-	akd_d <= akd;
-
-	if (RESET) begin
-		keydown <= 0;
-		keydown_cnt <= 0;
-		keyrep_cnt <= 0;
-	end else begin
-		if (|keydown_cnt)
-			keydown_cnt <= keydown_cnt - 1'd1;
-		else begin
-			keydown_cnt <= 0;
-			keydown <= 0;
-		end
-
-		if (~akd_d & akd) begin
-			keydown <= 1;
-			keyrep_cnt <= 24'd2_000_000;
-			keydown_cnt <= 24'd300_000;
-		end else if (|keyrep_cnt)
-			keyrep_cnt <= keyrep_cnt - 1'd1;
-		else if (akd) begin
-			keyrep_cnt <= 24'd500_000;
-			keydown_cnt <= 24'd300_000;
-			keydown <= 1;
-		end else begin
-			keydown_cnt <= 0;
-			keydown <= 0;
-		end
-
-	end
+    reg key_strobe_last;
+    key_strobe_last <= KEY_STROBE;
+    if (RESET) begin
+        wr_index = 3'b000;
+        rd_index = 3'b000;
+        keystrokes[0] = 8'h00;
+        keystrokes[1] = 8'h00;
+        keystrokes[2] = 8'h00;
+        keystrokes[3] = 8'h00;
+        keystrokes[4] = 8'h00;
+        keystrokes[5] = 8'h00;
+        keystrokes[6] = 8'h00;
+        keystrokes[7] = 8'h00;
+        rd_counter = 8'd0;
+    end else begin
+        if (key_strobe_last & ~KEY_STROBE) begin
+            if ({akd, kcode} != keystrokes[wr_index]) begin
+                if (akd == 1'b1 && akd == keystrokes[wr_index][7]) begin
+                    keystrokes[wr_index + 3'd1] <= {~keystrokes[wr_index][7], keystrokes[wr_index][6:0]};
+                    keystrokes[wr_index + 3'd2] <= {akd, kcode};
+                    wr_index <= wr_index + 3'd2;
+                end else begin
+                    keystrokes[wr_index + 3'd1] <= {akd, kcode};
+                    wr_index <= wr_index + 3'd1;
+                end
+            end
+        end
+        rd_counter <= rd_counter + 8'd1;
+        if (&rd_counter && rd_index != wr_index) begin
+            rd_index <= rd_index + 3'd1;
+        end
+    end
 end
 
 assign UPCASE = upcase;
