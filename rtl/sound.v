@@ -142,7 +142,7 @@ module mixer(
        3'b110:
 	 out = slf & vco;
        3'b111:
-	 out = 0;
+	 out = 1;
      endcase // case( mixer_ctl )
    end
 endmodule // mixer
