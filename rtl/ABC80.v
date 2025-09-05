@@ -591,7 +591,7 @@ always @(posedge CLK12) begin : KEYBOARD
 			{2'b01, 9'h025}: begin akd <= KEY_PRESSED; kcode <= 7'h24; end //SHIFT+4
 			{2'b01, 9'h02E}: begin akd <= KEY_PRESSED; kcode <= 7'h25; end //SHIFT+5
 			{2'b01, 9'h036}: begin akd <= KEY_PRESSED; kcode <= 7'h26; end //SHIFT+6
-			{2'b01, 9'h03D}: begin akd <= KEY_PRESSED; kcode <= 7'h27; end //SHIFT+7
+			{2'b01, 9'h03D}: begin akd <= KEY_PRESSED; kcode <= 7'h2F; end //SHIFT+7
 			{2'b01, 9'h03E}: begin akd <= KEY_PRESSED; kcode <= 7'h28; end //SHIFT+8
 			{2'b01, 9'h046}: begin akd <= KEY_PRESSED; kcode <= 7'h29; end //SHIFT+9
 			{2'b01, 9'h045}: begin akd <= KEY_PRESSED; kcode <= 7'h3D; end //SHIFT+0
