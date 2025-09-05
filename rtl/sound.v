@@ -24,9 +24,13 @@
 // Attack       =  22 ms
 // Decay        = 470 ms
 
+// for 16 MHz VCO master clock
+//`define vco_min  14'd1024
+//`define vco_max  14'd12499
 
-`define vco_min  14'd1024
-`define vco_max  14'd12499
+// for 12 MHz VCO master clock
+`define vco_min  14'd768
+`define vco_max  14'd9374
 
 // Model the 76477 SLF.  This returns a "sawtooth" value
 // between (approximately) [1024,12499] which gives about
@@ -118,31 +122,29 @@ module mixer(
 	     output mixer_out
 	     );
    reg 		    out;
-   
+
    assign 	    mixer_out = out;
-   
-   always @(*)
+
+   always @(*) begin
      case ( mixer_ctl )
        3'b000:
-	 out <= vco;
+	 out = vco;
        3'b001:
-	 out <= slf;
+	 out = slf;
        3'b010:
-	 out <= noise;
+	 out = noise;
        3'b011:
-	 out <= vco & noise;
+	 out = vco & noise;
        3'b100:
-	 out <= slf & noise;
+	 out = slf & noise;
        3'b101:
-	 out <= slf & vco & noise;
+	 out = slf & vco & noise;
        3'b110:
-	 out <= slf & vco;
+	 out = slf & vco;
        3'b111:
-	 // This doesn't match the documentation, but if the documentation
-	 // is followed and this is out <= 1, then "out 6,255" is silent,
-	 // which it definitely wasn't on real hardware.
-	 out <= envelope;       
+	 out = 0;
      endcase // case( mixer_ctl )
+   end
 endmodule // mixer
 
 //
