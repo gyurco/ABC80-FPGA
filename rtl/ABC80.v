@@ -601,9 +601,38 @@ always @(posedge CLK12) begin : KEYBOARD
 			{2'b00, 9'h16B}: begin akd <= KEY_PRESSED; kcode <= 7'h08; end //LEFT
 			{2'b00, 9'h066}: begin akd <= KEY_PRESSED; kcode <= 7'h08; end //BACKSPACE
 			{2'b00, 9'h174}: begin akd <= KEY_PRESSED; kcode <= 7'h09; end //RIGHT
-			{2'b10, 9'h021}: begin akd <= KEY_PRESSED; kcode <= 7'h03; end //CTRL+C
-			{2'b10, 9'h022}: begin akd <= KEY_PRESSED; kcode <= 7'h18; end //CTRL+X
+
 			{2'b10, 9'h01c}: begin akd <= KEY_PRESSED; kcode <= 7'h01; end //CTRL+A
+			{2'b10, 9'h032}: begin akd <= KEY_PRESSED; kcode <= 7'h02; end //CTRL+B
+			{2'b10, 9'h021}: begin akd <= KEY_PRESSED; kcode <= 7'h03; end //CTRL+C
+			{2'b10, 9'h023}: begin akd <= KEY_PRESSED; kcode <= 7'h04; end //CTRL+D
+			{2'b10, 9'h024}: begin akd <= KEY_PRESSED; kcode <= 7'h05; end //CTRL+E
+			{2'b10, 9'h02B}: begin akd <= KEY_PRESSED; kcode <= 7'h06; end //CTRL+F
+			{2'b10, 9'h034}: begin akd <= KEY_PRESSED; kcode <= 7'h07; end //CTRL+G
+			{2'b10, 9'h033}: begin akd <= KEY_PRESSED; kcode <= 7'h08; end //CTRL+H
+			{2'b10, 9'h043}: begin akd <= KEY_PRESSED; kcode <= 7'h09; end //CTRL+I
+			{2'b10, 9'h03B}: begin akd <= KEY_PRESSED; kcode <= 7'h0a; end //CTRL+J
+			{2'b10, 9'h042}: begin akd <= KEY_PRESSED; kcode <= 7'h0b; end //CTRL+K
+			{2'b10, 9'h04B}: begin akd <= KEY_PRESSED; kcode <= 7'h0c; end //CTRL+L
+			{2'b10, 9'h03A}: begin akd <= KEY_PRESSED; kcode <= 7'h0d; end //CTRL+M
+			{2'b10, 9'h031}: begin akd <= KEY_PRESSED; kcode <= 7'h0e; end //CTRL+N
+			{2'b10, 9'h044}: begin akd <= KEY_PRESSED; kcode <= 7'h0f; end //CTRL+O
+			{2'b10, 9'h04D}: begin akd <= KEY_PRESSED; kcode <= 7'h10; end //CTRL+P
+			{2'b10, 9'h015}: begin akd <= KEY_PRESSED; kcode <= 7'h11; end //CTRL+Q
+			{2'b10, 9'h02D}: begin akd <= KEY_PRESSED; kcode <= 7'h12; end //CTRL+R
+			{2'b10, 9'h01B}: begin akd <= KEY_PRESSED; kcode <= 7'h13; end //CTRL+S
+			{2'b10, 9'h02C}: begin akd <= KEY_PRESSED; kcode <= 7'h14; end //CTRL+T
+			{2'b10, 9'h03C}: begin akd <= KEY_PRESSED; kcode <= 7'h15; end //CTRL+U
+			{2'b10, 9'h02A}: begin akd <= KEY_PRESSED; kcode <= 7'h16; end //CTRL+V
+			{2'b10, 9'h01D}: begin akd <= KEY_PRESSED; kcode <= 7'h17; end //CTRL+W
+			{2'b10, 9'h022}: begin akd <= KEY_PRESSED; kcode <= 7'h18; end //CTRL+X
+			{2'b10, 9'h035}: begin akd <= KEY_PRESSED; kcode <= 7'h19; end //CTRL+Y
+			{2'b10, 9'h01A}: begin akd <= KEY_PRESSED; kcode <= 7'h1a; end //CTRL+Z
+			{2'b10, 9'h052}: begin akd <= KEY_PRESSED; kcode <= 7'h1b; end //CTRL+'
+			{2'b10, 9'h04C}: begin akd <= KEY_PRESSED; kcode <= 7'h1c; end //CTRL+;
+			{2'b10, 9'h054}: begin akd <= KEY_PRESSED; kcode <= 7'h1d; end //CTRL+[
+			{2'b10, 9'h05B}: begin akd <= KEY_PRESSED; kcode <= 7'h1e; end //CTRL+]
+			{2'b11, 9'h044}: begin akd <= KEY_PRESSED; kcode <= 7'h1f; end //CTRL+SHIFT+O
 
 			{2'b00, 9'h041}: begin akd <= KEY_PRESSED; kcode <= 7'h2C; end // ,
 			{2'b00, 9'h049}: begin akd <= KEY_PRESSED; kcode <= 7'h2E; end // .
