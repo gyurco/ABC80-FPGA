@@ -29,7 +29,7 @@
 //`define vco_max  14'd12499
 
 // for 12 MHz VCO master clock
-`define vco_min  14'd768
+`define vco_min  14'd937
 `define vco_max  14'd9374
 
 // Model the 76477 SLF.  This returns a "sawtooth" value
