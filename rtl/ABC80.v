@@ -603,6 +603,7 @@ always @(posedge CLK12) begin : KEYBOARD
 			{2'b00, 9'h174}: begin akd <= KEY_PRESSED; kcode <= 7'h09; end //RIGHT
 			{2'b10, 9'h021}: begin akd <= KEY_PRESSED; kcode <= 7'h03; end //CTRL+C
 			{2'b10, 9'h022}: begin akd <= KEY_PRESSED; kcode <= 7'h18; end //CTRL+X
+			{2'b10, 9'h01c}: begin akd <= KEY_PRESSED; kcode <= 7'h01; end //CTRL+A
 
 			{2'b00, 9'h041}: begin akd <= KEY_PRESSED; kcode <= 7'h2C; end // ,
 			{2'b00, 9'h049}: begin akd <= KEY_PRESSED; kcode <= 7'h2E; end // .
